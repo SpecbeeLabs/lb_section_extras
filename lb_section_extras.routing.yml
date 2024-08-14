@@ -1,0 +1,7 @@
+storm_cms.page_builder.style_settings:
+  path: '/admin/config/system/storm-page-builder'
+  defaults:
+    _title: 'Storm Page Builder Style Settings'
+    _form: 'Drupal\lb_section_extras\Form\StormPageBuilderStyleSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

@@ -1,0 +1,10 @@
+name: Layout Builder Section Extras
+type: module
+description: "Adds extra configurations and options for Layout Builder sections"
+version: VERSION
+core_version_requirement: ^10 || ^11
+package: Storm
+dependencies:
+  - drupal:layout_builder
+  - drupal:layout_discovery
+  - drupal:media

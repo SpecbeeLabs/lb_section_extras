@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Layout builder customizations.
+ */
+
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+
+/**
+ * Implements hook_preprocess_layout().
+ */
+function lb_section_extras_preprocess_layout(&$variables) {
+
+  if ($variables['settings'] && (
+      isset($variables['settings']['section_background']) ||
+      isset($variables['settings']['section_padding']) ||
+      isset($variables['settings']['section_spacing']) ||
+      isset($variables['settings']['section_theme']['styles']))) {
+    // Merge all modifier classes.
+    $class = array_merge($class,
+      [$variables['settings']['section_background']['background_color']],
+      $variables['settings']['section_padding'],
+      $variables['settings']['section_spacing'],
+      $variables['settings']['section_theme']['styles']
+    );
+
+    // Filter out any none values.
+    $class = array_filter($class, fn ($m) => $m != 'none');
+  }
+
+  $media = $variables['settings']['section_background']['image']['background_media'] ?? NULL;
+  $position = $variables['settings']['section_background']['image']['background_position'] ?? NULL;
+  $size = $variables['settings']['section_background']['image']['background_size'] ?? NULL;
+  $repeat = $variables['settings']['section_background']['image']['background_repeat'] ?? NULL;
+  $attachment = $variables['settings']['section_background']['image']['background_attachment'] ?? NULL;
+
+  if ($media) {
+    $entity = Media::load($media);
+    if ($entity) {
+      $fid = $entity->getSource()->getSourceFieldValue($entity);
+      $file = File::load($fid);
+      $url = $file->createFileUrl();
+      $background_media = [
+        'background-image: url(' . $url . ');',
+        'background-position: ' . $position . ';',
+        'background-size: ' . $size . ';',
+        'background-repeat: ' . $repeat . ';',
+        'background-attachment: ' . $attachment . ';',
+      ];
+
+    }
+  }
+
+  $variables['attributes']['class'] = $class;
+  if (!empty($background_media)) {
+    $variables['#attributes']['style'] = $background_media;
+  }
+}

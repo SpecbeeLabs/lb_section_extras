@@ -1,0 +1,30 @@
+# CSS libraries for Layout plugins.
+layout.base:
+  version: VERSION
+  css:
+    theme:
+      css/layout/layout.css: {}
+
+layout.twocol:
+  version: VERSION
+  css:
+    theme:
+      css/layout/layout-two-column.css: {}
+  dependencies:
+    - storm_layout_builder/layout.base
+
+layout.threecol:
+  version: VERSION
+  css:
+    theme:
+      css/layout/layout-three-column.css: {}
+  dependencies:
+    - storm_layout_builder/layout.base
+
+layout.fourcol:
+  version: VERSION
+  css:
+    theme:
+      css/layout/layout-four-column.css: {}
+  dependencies:
+    - storm_layout_builder/layout.base
