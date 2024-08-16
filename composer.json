@@ -1,5 +1,5 @@
 {
-    "name": "drupal/lb_section_extras",
+    "name": "specbee/lb_section_extras",
     "description": "Adds extra configurations and options for Layout Builder sections",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
