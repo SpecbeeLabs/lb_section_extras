@@ -5,6 +5,7 @@
  * Layout builder customizations.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 
@@ -12,6 +13,8 @@ use Drupal\media\Entity\Media;
  * Implements hook_preprocess_layout().
  */
 function lb_section_extras_preprocess_layout(&$variables) {
+
+  $class = [];
 
   if ($variables['settings'] && (
       isset($variables['settings']['section_background']) ||
@@ -57,4 +60,162 @@ function lb_section_extras_preprocess_layout(&$variables) {
   if (!empty($background_media)) {
     $variables['#attributes']['style'] = $background_media;
   }
+}
+
+
+/**
+* Implements hook_form_FORM_ID_alter().
+*/
+function lb_section_extras_form_layout_builder_configure_section_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_object = $form_state->getFormObject();
+  $config = $form_object->getCurrentLayout()->getConfiguration();
+  $styleSettingConfigs = \Drupal::config('lb_section_extras.settings');
+
+  $form['layout_settings']['show_config'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Enable Section Configuration'),
+    '#default_value' => $config['lb_section_extras']['show_config'] ?? 0,
+  ];
+
+  $form['layout_settings']['section_title'] = [
+    '#type' => 'details',
+    '#title' => t('Section Title'),
+    '#tree' => TRUE,
+    '#states' => [
+      'visible' => [
+        ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
+      ],
+    ]
+  ];
+  $form['layout_settings']['section_title']['heading'] = [
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#description' => t('Provide an optional title to the layout section'),
+    '#default_value' => $config['lb_section_extras']['section_title']['heading'] ?? '',
+  ];
+  $form['layout_settings']['section_title']['heading_style'] = [
+    '#type' => 'select',
+    '#title' => t('Style'),
+    '#options' => [
+      'h1' => t('H1'),
+      'h2' => t('H2'),
+      'h3' => t('H3'),
+      'h4' => t('H4'),
+      'h5' => t('H5'),
+      'h6' => t('H6'),
+    ],
+    '#default_value' => $config['lb_section_extras']['section_title']['heading_style'] ?? 'h1',
+  ];
+  $form['layout_settings']['section_title']['heading_alignment'] = [
+    '#type' => 'select',
+    '#title' => t('Alignment'),
+    '#options' => [
+      'text-start' => t('Left'),
+      'text-end' => t('Right'),
+      'text-center' => t('Center'),
+    ],
+    '#default_value' => $config['lb_section_extras']['section_title']['heading_alignment'] ?? 'text-start',
+  ];
+
+  $form['layout_settings']['section_background'] = [
+    '#type' => 'details',
+    '#title' => t('Section Background'),
+    '#states' => [
+      'visible' => [
+        ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
+      ],
+    ]
+  ];
+  $colorOptions = _get_colors($styleSettingConfigs->get('background_colors'));
+  $form['layout_settings']['section_background']['background_color'] = [
+    '#type' => 'select',
+    '#options' => $colorOptions,
+    '#default_value' => $config['lb_section_extras']['section_background']['background_color'] ?? 'bg-none',
+    '#title' => t('Background Color'),
+  ];
+
+  array_unshift($form['#submit'], '_lb_section_extras_config_submit_form');
+
+}
+
+/**
+ * Submit handler for submitting LB section config form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state object.
+ */
+function _lb_section_extras_config_submit_form(array $form, FormStateInterface $form_state) {
+
+  $formObject = $form_state->getFormObject();
+  $config = $formObject->getCurrentLayout()->getConfiguration();
+  if (!$config) {
+    $config = [];
+  }
+
+  $showConfig = $form_state->getValue(['layout_settings', 'show_config']);
+
+  if ($showConfig) {
+    $config['lb_section_extras'] = [
+      'show_config' => $form_state->getValue(['layout_settings', 'show_config']),
+      'section_title' => [
+        'heading' => $form_state->getValue(['layout_settings', 'section_title', 'heading']),
+        'heading_style' => $form_state->getValue(['layout_settings', 'section_title', 'heading_style']),
+        'heading_alignment' => $form_state->getValue(['layout_settings', 'section_title', 'heading_alignment'])
+      ],
+      'section_background' => [
+        'background_color' => $form_state->getValue(['layout_settings', 'section_background', 'background_color'])
+      ],
+    ];
+  }
+
+  $formObject->getCurrentLayout()->setConfiguration($config);
+
+}
+
+/**
+ * Get color options.
+ *
+ * @param object $colorConfigs
+ *   The color configurtion setting object.
+ *
+ * @return array
+ *   The color options array.
+ */
+function _get_colors($colorConfigs) {
+  $options = [];
+
+  if (isset($colorConfigs) && $colorConfigs !== '') {
+    $colors = _get_config_values($colorConfigs);
+    foreach ($colors as $class => $color) {
+      $options[$class] = $color;
+    }
+    $options = ['bg-none' => t("None")] + $options;
+  }
+
+  return $options;
+}
+
+/**
+ * Explode the config options to array.
+ *
+ * @param object $configs
+ *   The configurtion setting object.
+ *
+ * @return array
+ *   The exploded options array.
+ *
+ */
+function _get_config_values($configs) {
+  $options = [];
+  foreach (explode("\r\n", $configs) as $config) {
+    $config = trim($config);
+    if (!empty($config)) {
+      [$class, $label] = explode('|', $config);
+      $options[$class] = $label;
+    }
+  }
+
+  return $options;
 }

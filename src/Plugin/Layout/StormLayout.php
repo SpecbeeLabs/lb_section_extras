@@ -60,57 +60,6 @@ class StormLayout extends LayoutDefault implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form['section_title'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Section title'),
-      '#weight' => 1,
-    ];
-
-    $form['section_title']['heading'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Title'),
-      '#description' => $this->t('Provide an optional title to the layout section'),
-      '#default_value' => $this->configuration['section_title']['heading'] ?? '',
-    ];
-
-    $form['section_title']['heading_style'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Style'),
-      '#options' => [
-        'h1' => $this->t('H1'),
-        'h2' => $this->t('H2'),
-        'h3' => $this->t('H3'),
-        'h4' => $this->t('H4'),
-        'h5' => $this->t('H5'),
-        'h6' => $this->t('H6'),
-      ],
-      '#default_value' => $this->configuration['section_title']['heading_style'] ?? 'h1',
-    ];
-
-    $form['section_title']['heading_alignment'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Alignment'),
-      '#options' => [
-        'text-start' => $this->t('Left'),
-        'text-end' => $this->t('Right'),
-        'text-center' => $this->t('Center'),
-      ],
-      '#default_value' => $this->configuration['section_title']['heading_alignment'] ?? 'text-start',
-    ];
-
-    $form['section_background'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Background'),
-      '#weight' => 3,
-    ];
-
-    $form['section_background']['background_color'] = [
-      '#type' => 'select',
-      '#options' => $this->getColors(),
-      '#default_value' => $this->configuration['section_background']['background_color'] ?? 'bg-none',
-      '#title' => $this->t('Background Color'),
-    ];
-
     $form['section_background']['image'] = [
       '#type' => 'details',
       '#title' => $this->t('Background Image'),
@@ -239,22 +188,6 @@ class StormLayout extends LayoutDefault implements ContainerFactoryPluginInterfa
       '#default_value' => $this->configuration['section_theme']['styles'] ?? [],
     ];
     return parent::buildConfigurationForm($form, $form_state);
-  }
-
-  /**
-   * Helper method to build color options scheme.
-   */
-  private function getColors() {
-    $config = $this->configFactory->get('lb_section_extras.settings')->get('background_colors');
-    $colors = $this->getConfigValues($config);
-
-    foreach ($colors as $class => $color) {
-      $options[$class] = $color;
-    }
-
-    $options = ['bg-none' => $this->t("None")] + $options;
-
-    return $options;
   }
 
   /**
