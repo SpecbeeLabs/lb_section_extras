@@ -1,3 +1,8 @@
+custom_section_attributes:
+  id: 1
+  data: 1
+section_attributes_id: "section-one-col\r\nsection-two-col"
+section_attributes_data: "data-section|example-value\r\ndata-attribute-with-no-value"
 background_colors: "bg-red|Red\r\nbg-green|Green\r\nbg-blue|Blue\r\nbg-yellow|Yellow\r\nbg-black|Black"
 padding: "spacing-small|Small\r\nspacing-large|Large\r\nspacing-medium|Medium\r\nspacing-xl|Extra large"
 margin: "margin-small|Small\r\nmargin-large|Large\r\nmargin-medium|Medium\r\nmargin-xl|Extra large"
