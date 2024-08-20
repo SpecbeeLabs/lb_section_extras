@@ -296,7 +296,7 @@ class StormLayout extends LayoutDefault implements ContainerFactoryPluginInterfa
    */
   public function build(array $regions) {
     $build = parent::build($regions);
-    $build['#attributes']['class'] = [
+    $build['#attributes']['class'][] = [
       'layout',
     ];
 

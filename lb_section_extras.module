@@ -53,7 +53,7 @@ function lb_section_extras_preprocess_layout(&$variables) {
     }
   }
 
-  $variables['attributes']['class'] = $class;
+  $variables['attributes']['class'][] = $class;
   if (!empty($background_media)) {
     $variables['#attributes']['style'] = $background_media;
   }
