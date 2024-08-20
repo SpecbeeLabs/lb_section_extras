@@ -134,6 +134,78 @@ function lb_section_extras_form_layout_builder_configure_section_alter(&$form, F
     '#title' => t('Background Color'),
   ];
 
+  $form['layout_settings']['padding'] = [
+    '#type' => 'details',
+    '#title' => t('Section Padding'),
+    '#states' => [
+      'visible' => [
+        ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
+      ],
+    ]
+  ];
+  $paddingOptions = [
+    'padding_top' => t('Top padding'),
+    'padding_bottom' => t('Bottom padding'),
+    'padding_left' => t('Left padding'),
+    'padding_right' => t('Right padding'),
+  ];
+  foreach ($paddingOptions as $key => $value) {
+    $form['layout_settings']['padding'][$key] = [
+      '#type' => 'select',
+      '#title' => $value,
+      '#options' => [
+        'none' => t('None'),
+      ],
+      '#empty_value' => 'none',
+      '#default_value' => $config['lb_section_extras']['padding'][$key] ?? 'none',
+    ];
+    $form['layout_settings']['padding'][$key]['#options'] = _get_config_values($styleSettingConfigs->get($key));
+  }
+
+  $form['layout_settings']['spacing'] = [
+    '#type' => 'details',
+    '#title' => t('Section Spacing'),
+    '#states' => [
+      'visible' => [
+        ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
+      ],
+    ]
+  ];
+  $spacingOptions = [
+    'spacing_top' => t('Top spacing'),
+    'spacing_bottom' => t('Bottom spacing'),
+    'spacing_left' => t('Left spacing'),
+    'spacing_right' => t('Right spacing'),
+  ];
+  foreach ($spacingOptions as $key => $value) {
+    $form['layout_settings']['spacing'][$key] = [
+      '#type' => 'select',
+      '#title' => $value,
+      '#options' => [
+        'none' => t('None'),
+      ],
+      '#empty_value' => 'none',
+      '#default_value' => $config['lb_section_extras']['spacing'][$key] ?? 'none',
+    ];
+    $form['layout_settings']['spacing'][$key]['#options'] = _get_config_values($styleSettingConfigs->get($key));
+  }
+
+  $form['layout_settings']['section_theme'] = [
+    '#type' => 'details',
+    '#title' => t('Theme'),
+    '#states' => [
+      'visible' => [
+        ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
+      ],
+    ]
+  ];
+  $form['layout_settings']['section_theme']['styles'] = [
+    '#type' => 'checkboxes',
+    '#multiple' => TRUE,
+    '#options' => _get_config_values($styleSettingConfigs->get('styles')),
+    '#default_value' => $config['lb_section_extras']['section_theme']['styles'] ?? [],
+  ];
+
   array_unshift($form['#submit'], '_lb_section_extras_config_submit_form');
 
 }
@@ -155,10 +227,10 @@ function _lb_section_extras_config_submit_form(array $form, FormStateInterface $
   }
 
   $showConfig = $form_state->getValue(['layout_settings', 'show_config']);
+  $config['lb_section_extras']['show_config'] = $showConfig;
 
   if ($showConfig) {
     $config['lb_section_extras'] = [
-      'show_config' => $form_state->getValue(['layout_settings', 'show_config']),
       'section_title' => [
         'heading' => $form_state->getValue(['layout_settings', 'section_title', 'heading']),
         'heading_style' => $form_state->getValue(['layout_settings', 'section_title', 'heading_style']),
@@ -167,7 +239,25 @@ function _lb_section_extras_config_submit_form(array $form, FormStateInterface $
       'section_background' => [
         'background_color' => $form_state->getValue(['layout_settings', 'section_background', 'background_color'])
       ],
+      'padding' => [
+        'padding_top' => $form_state->getValue(['layout_settings', 'padding', 'padding_top']),
+        'padding_bottom' => $form_state->getValue(['layout_settings', 'padding', 'padding_bottom']),
+        'padding_left' => $form_state->getValue(['layout_settings', 'padding', 'padding_left']),
+        'padding_right' => $form_state->getValue(['layout_settings', 'padding', 'padding_right']),
+      ],
+      'spacing' => [
+        'spacing_top' => $form_state->getValue(['layout_settings', 'spacing', 'spacing_top']),
+        'spacing_bottom' => $form_state->getValue(['layout_settings', 'spacing', 'spacing_bottom']),
+        'spacing_left' => $form_state->getValue(['layout_settings', 'spacing', 'spacing_left']),
+        'spacing_right' => $form_state->getValue(['layout_settings', 'spacing', 'spacing_right']),
+      ],
+      'section_theme' => [
+        'styles' => $form_state->getValue(['layout_settings', 'section_theme', 'styles']),
+      ],
     ];
+  }
+  else {
+    $config = [];
   }
 
   $formObject->getCurrentLayout()->setConfiguration($config);
@@ -200,7 +290,7 @@ function _get_colors($colorConfigs) {
 /**
  * Explode the config options to array.
  *
- * @param object $configs
+ * @param string $configs
  *   The configurtion setting object.
  *
  * @return array
