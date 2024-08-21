@@ -5,6 +5,7 @@
  * Layout builder customizations.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -236,8 +237,66 @@ function lb_section_extras_form_layout_builder_configure_section_alter(&$form, F
     '#default_value' => $config['lb_section_extras']['section_theme']['styles'] ?? [],
   ];
 
+  // Custom submit and validation handlers.
+  array_unshift($form['#validate'], '_lb_section_extras_config_validate_form');
   array_unshift($form['#submit'], '_lb_section_extras_config_submit_form');
 
+}
+
+/**
+ * Custom validation handler for section config form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state object.
+ */
+function _lb_section_extras_config_validate_form(array $form, FormStateInterface $form_state) {
+  $values = $form_state->getValues();
+
+  // Validate section attributes.
+  if ($values['layout_settings']['show_config']) {
+    if (isset($values['layout_settings']['section_attributes']['id']) &&!_lb_section_extras_validate_attribute($values['layout_settings']['section_attributes']['id'])) {
+      $form_state->setError($form['layout_settings']['section_attributes']['id'], t('ID attribute must be valid for CSS.'));
+    }
+    if (isset($values['layout_settings']['section_attributes']['classes'])) {
+      $classes = explode(' ', $values['layout_settings']['section_attributes']['classes']);
+      foreach ($classes as $class) {
+        if (!_lb_section_extras_validate_attribute($class)) {
+          $form_state->setError($form['layout_settings']['section_attributes']['classes'], t('Class attribute must be valid CSS classes'));
+          break;
+        }
+      }
+    }
+    if (isset($values['layout_settings']['section_attributes']['data'])) {
+      $data_attrs = preg_split('/\R/', $values['layout_settings']['section_attributes']['data']);
+      foreach ($data_attrs as $data_attr) {
+        if (empty($data_attr)) {
+          break;
+        }
+        $data_attr = explode('|', $data_attr);
+        if (substr($data_attr[0], 0, 5) !== 'data-') {
+          $form_state->setError($form['layout_settings']['section_attributes']['data'], t('Data attributes must begin with "data-"'));
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper function to validate css attributes.
+ *
+ * @param string $value
+ *   The attribute value.
+ *
+ * @return bool
+ */
+function _lb_section_extras_validate_attribute($value) {
+  if ($value == Html::cleanCssIdentifier($value)) {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 /**
@@ -257,10 +316,10 @@ function _lb_section_extras_config_submit_form(array $form, FormStateInterface $
   }
 
   $showConfig = $form_state->getValue(['layout_settings', 'show_config']);
-  $config['lb_section_extras']['show_config'] = $showConfig;
 
   if ($showConfig) {
     $config['lb_section_extras'] = [
+      'show_config' => $form_state->getValue(['layout_settings', 'show_config']),
       'section_attributes' => [
         'id' => $form_state->getValue(['layout_settings', 'section_attributes', 'id']),
         'classes' => $form_state->getValue(['layout_settings', 'section_attributes', 'classes']),
@@ -292,7 +351,7 @@ function _lb_section_extras_config_submit_form(array $form, FormStateInterface $
     ];
   }
   else {
-    $config = [];
+    $config['lb_section_extras'] = [];
   }
 
   $formObject->getCurrentLayout()->setConfiguration($config);
