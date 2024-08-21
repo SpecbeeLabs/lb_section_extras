@@ -31,40 +31,6 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
 
     $config = $this->config('lb_section_extras.settings');
 
-    $form['allowed_attributes'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Allowed Attributes'),
-      '#open' => TRUE,
-    ];
-    $options = [
-      'id' => $this->t('ID'),
-      'data' => $this->t('Custom data attributes'),
-    ];
-    $form['allowed_attributes']['custom_section_attributes'] = [
-      '#type' => 'checkboxes',
-      '#title' => $this->t('Allowed section attributes'),
-      '#options' => $options,
-      '#default_value' => $config->get('custom_section_attributes') ?? [],
-    ];
-
-    $form['section_attributes'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Section Attributes'),
-      '#open' => TRUE,
-    ];
-    $form['section_attributes']['section_attributes_id'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('IDs'),
-      '#description' => $this->t('<p>Enter one value per line</p>'),
-      '#default_value' => $config->get('section_attributes_id') ?? [],
-    ];
-    $form['section_attributes']['section_attributes_data'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Data-* attributes'),
-      '#description' => $this->t('<pEnter one value per line, in the format <b>key|label</b> format. The pipe (|) separating its name and its optional value:<br>data-section|example-value<br>data-attribute-with-no-value</p>'),
-      '#default_value' => $config->get('section_attributes_data') ?? [],
-    ];
-
     $form['background'] = [
       '#type' => 'details',
       '#title' => $this->t('Background'),

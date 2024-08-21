@@ -77,6 +77,36 @@ function lb_section_extras_form_layout_builder_configure_section_alter(&$form, F
     '#default_value' => $config['lb_section_extras']['show_config'] ?? 0,
   ];
 
+  $form['layout_settings']['section_attributes'] = [
+    '#type' => 'details',
+    '#title' => t('Section Attributes'),
+    '#tree' => TRUE,
+    '#states' => [
+      'visible' => [
+        ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
+      ],
+    ]
+  ];
+
+  $form['layout_settings']['section_attributes']['id'] = [
+    '#type' => 'textfield',
+    '#title' => t('ID'),
+    '#description' => t('<p>A unique HTML identifier for the section.</p>'),
+    '#default_value' => $config['lb_section_extras']['section_attributes']['id'] ?? '',
+  ];
+  $form['layout_settings']['section_attributes']['classes'] = [
+    '#type' => 'textfield',
+    '#title' => t('Classes'),
+    '#description' => t('<p>The classes to applied on section. Please seprate them with spaces.</p>'),
+    '#default_value' => $config['lb_section_extras']['section_attributes']['classes'] ?? [],
+  ];
+  $form['layout_settings']['section_attributes']['data'] = [
+    '#type' => 'textarea',
+    '#title' => t('Data-* attributes'),
+    '#description' => t('<p>Enter one value per line, in the format <b>key|label</b> format. The pipe (|) separating its name and its optional value:<br>data-section|example-value<br>data-attribute-with-no-value</p>'),
+    '#default_value' => $config['lb_section_extras']['section_attributes']['data'] ?? [],
+  ];
+
   $form['layout_settings']['section_title'] = [
     '#type' => 'details',
     '#title' => t('Section Title'),
@@ -192,7 +222,7 @@ function lb_section_extras_form_layout_builder_configure_section_alter(&$form, F
 
   $form['layout_settings']['section_theme'] = [
     '#type' => 'details',
-    '#title' => t('Theme'),
+    '#title' => t('Section Theme'),
     '#states' => [
       'visible' => [
         ':input[name="layout_settings[show_config]"]' => ['checked' => TRUE],
@@ -231,6 +261,11 @@ function _lb_section_extras_config_submit_form(array $form, FormStateInterface $
 
   if ($showConfig) {
     $config['lb_section_extras'] = [
+      'section_attributes' => [
+        'id' => $form_state->getValue(['layout_settings', 'section_attributes', 'id']),
+        'classes' => $form_state->getValue(['layout_settings', 'section_attributes', 'classes']),
+        'data' => $form_state->getValue(['layout_settings', 'section_attributes', 'data']),
+      ],
       'section_title' => [
         'heading' => $form_state->getValue(['layout_settings', 'section_title', 'heading']),
         'heading_style' => $form_state->getValue(['layout_settings', 'section_title', 'heading_style']),
