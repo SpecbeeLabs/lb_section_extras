@@ -1,4 +1,4 @@
-storm_cms.page_builder.style_settings:
+lb_section_extras.page_builder.style_settings:
   path: '/admin/config/system/storm-page-builder'
   defaults:
     _title: 'Storm Page Builder Style Settings'

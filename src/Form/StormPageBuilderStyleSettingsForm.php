@@ -31,10 +31,32 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
 
     $config = $this->config('lb_section_extras.settings');
 
+    $form['enable_section_attributes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Section Attributes'),
+      '#default_value' => $config->get('enable_section_attributes') ?? 0,
+    ];
+
+    $form['enable_title_attributes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Title Attributes'),
+      '#default_value' => $config->get('enable_title_attributes') ?? 0,
+    ];
+
+    $form['bg_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Background Section'),
+      '#default_value' => $config->get('bg_show_config') ?? 0,
+    ];
     $form['background'] = [
       '#type' => 'details',
-      '#title' => $this->t('Background'),
+      '#title' => $this->t('Background Configurations'),
       '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="bg_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['background']['background_colors'] = [
       '#type' => 'textarea',
@@ -43,10 +65,20 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('background_colors'),
     ];
 
+    $form['padding_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Padding Section'),
+      '#default_value' => $config->get('padding_show_config') ?? 0,
+    ];
     $form['padding'] = [
       '#type' => 'details',
       '#title' => $this->t('Padding'),
       '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="padding_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['padding']['markup'] = [
       '#type' => 'markup',
@@ -73,10 +105,20 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('padding_right'),
     ];
 
+    $form['spacing_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Spacing Section'),
+      '#default_value' => $config->get('spacing_show_config') ?? 0,
+    ];
     $form['spacing'] = [
       '#type' => 'details',
       '#title' => $this->t('Spacing'),
       '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="spacing_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['spacing']['markup'] = [
       '#type' => 'markup',
@@ -103,10 +145,20 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('spacing_right'),
     ];
 
+    $form['theme_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Theme Section'),
+      '#default_value' => $config->get('theme_show_config') ?? 0,
+    ];
     $form['theme'] = [
       '#type' => 'details',
       '#title' => $this->t('Theme'),
       '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="theme_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['theme']['markup'] = [
       '#type' => 'markup',
