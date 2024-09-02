@@ -14,7 +14,7 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'lb_section_extras.style_settings';
+    return 'lb_section_extras.settings';
   }
 
   /**
@@ -28,53 +28,97 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['background'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Background'),
-      '#open' => TRUE,
+
+    $config = $this->config('lb_section_extras.settings');
+
+    $form['enable_section_attributes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Section Attributes'),
+      '#default_value' => $config->get('enable_section_attributes') ?? 0,
     ];
 
+    $form['enable_title_attributes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Title Attributes'),
+      '#default_value' => $config->get('enable_title_attributes') ?? 0,
+    ];
+
+    $form['bg_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Background Section'),
+      '#default_value' => $config->get('bg_show_config') ?? 0,
+    ];
+    $form['background'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Background Configurations'),
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="bg_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
     $form['background']['background_colors'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Color palette'),
       '#description' => $this->t('<p>Enter one value per line, in the format <b>key|label</b> where <em>key</em> is the CSS class name (without the perfixed period CSS selector), and <em>label</em> is the human readable name of the background.</p>'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('background_colors'),
+      '#default_value' => $config->get('background_colors'),
     ];
 
+    $form['padding_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Padding Section'),
+      '#default_value' => $config->get('padding_show_config') ?? 0,
+    ];
     $form['padding'] = [
       '#type' => 'details',
       '#title' => $this->t('Padding'),
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="padding_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
-
     $form['padding']['markup'] = [
       '#type' => 'markup',
       '#markup' => '<p>' . $this->t('Enter one value per line, in the format <b>key|label</b> where <em>key</em> is the CSS class name (without the perfixed period CSS selector), and <em>label</em> is the human readable name.') . '</p>',
     ];
-
     $form['padding']['padding_top'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Padding top'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('padding_top'),
+      '#default_value' => $config->get('padding_top'),
     ];
     $form['padding']['padding_bottom'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Padding bottom'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('padding_bottom'),
+      '#default_value' => $config->get('padding_bottom'),
     ];
     $form['padding']['padding_left'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Padding left'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('padding_left'),
+      '#default_value' => $config->get('padding_left'),
     ];
     $form['padding']['padding_right'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Padding right'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('padding_right'),
+      '#default_value' => $config->get('padding_right'),
     ];
 
+    $form['spacing_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Spacing Section'),
+      '#default_value' => $config->get('spacing_show_config') ?? 0,
+    ];
     $form['spacing'] = [
       '#type' => 'details',
       '#title' => $this->t('Spacing'),
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="spacing_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['spacing']['markup'] = [
       '#type' => 'markup',
@@ -83,27 +127,38 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
     $form['spacing']['spacing_top'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Spacing top'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('spacing_top'),
+      '#default_value' => $config->get('spacing_top'),
     ];
     $form['spacing']['spacing_bottom'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Spacing bottom'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('spacing_bottom'),
+      '#default_value' => $config->get('spacing_bottom'),
     ];
     $form['spacing']['spacing_left'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Spacing left'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('spacing_left'),
+      '#default_value' => $config->get('spacing_left'),
     ];
     $form['spacing']['spacing_right'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Spacing right'),
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('spacing_right'),
+      '#default_value' => $config->get('spacing_right'),
     ];
 
+    $form['theme_show_config'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Theme Section'),
+      '#default_value' => $config->get('theme_show_config') ?? 0,
+    ];
     $form['theme'] = [
       '#type' => 'details',
       '#title' => $this->t('Theme'),
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="theme_show_config"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['theme']['markup'] = [
       '#type' => 'markup',
@@ -112,7 +167,7 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
     ];
     $form['theme']['styles'] = [
       '#type' => 'textarea',
-      '#default_value' => $this->config('storm_cms.page_builder.style_settings')->get('styles'),
+      '#default_value' => $config->get('styles'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -129,10 +184,15 @@ class StormPageBuilderStyleSettingsForm extends ConfigFormBase {
       'form_id',
       'op',
     ];
-    $configuration = $this->config('storm_cms.page_builder.style_settings');
+    $configuration = $this->config('lb_section_extras.settings');
     foreach ($form_state->getValues() as $key => $value) {
       if (!in_array($key, $ignore)) {
-        $configuration->set($key, trim($value));
+        if (!is_array($value)) {
+          $configuration->set($key, trim($value));
+        }
+        else {
+          $configuration->set($key, $value);
+        }
       }
     }
     $configuration->save();

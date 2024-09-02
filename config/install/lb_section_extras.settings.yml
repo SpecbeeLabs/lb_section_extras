@@ -10,3 +10,9 @@ spacing_bottom: "spacing-bottom-s|Small\r\nspacing-bottom-m|Medium\r\nspacing-bo
 spacing_left: "spacing-left-s|Small\r\nspacing-left-m|Medium\r\nspacing-left-l|Large\r\nspacing-left-xl|Extra Large"
 spacing_right: "spacing-right-s|Small\r\nspacing-right-m|Medium\r\nspacing-right-l|Large\r\nspacing-right-xl|Extra Large"
 styles: "u-full-width|Full width"
+bg_show_config: 1
+padding_show_config: 1
+spacing_show_config: 1
+theme_show_config: 1
+enable_section_attributes: 1
+enable_title_attributes: 1

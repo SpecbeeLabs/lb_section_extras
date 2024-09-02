@@ -1,0 +1,5 @@
+lb_section_extras.settings:
+  title: "Layout Builder Section Configurations"
+  description: "Administer Layout Builder Extras Section module."
+  route_name: lb_section_extras.page_builder.style_settings
+  parent: system.admin_config_content

@@ -1,0 +1,6 @@
+services:
+  lb_section_extras.hook_form_alter:
+    class: Drupal\lb_section_extras\EventSubscriber\LbSectionFormAlter
+    arguments: ['@config.factory', '@current_route_match', '@entity_type.manager']
+    tags:
+      - { name: event_subscriber }

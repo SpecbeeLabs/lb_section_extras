@@ -4,7 +4,17 @@
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "drupal/hook_event_dispatcher": "^4.0"
+    },
+    "prefer-stable": true,
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    },
+
     "config": {
         "sort-packages": true
     }

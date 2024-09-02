@@ -6,5 +6,4 @@ core_version_requirement: ^10 || ^11
 package: Storm
 dependencies:
   - drupal:layout_builder
-  - drupal:layout_discovery
-  - drupal:media
+  - hook_event_dispatcher:core_event_dispatcher
