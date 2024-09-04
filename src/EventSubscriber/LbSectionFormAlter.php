@@ -100,12 +100,6 @@ class LbSectionFormAlter implements EventSubscriberInterface {
           '#description' => $this->t('<p>A unique HTML identifier for the section.</p>'),
           '#default_value' => $config['lb_section_extras']['section_attributes']['id'] ?? '',
         ];
-        $form['layout_settings']['section_attributes']['classes'] = [
-          '#type' => 'textfield',
-          '#title' => $this->t('Classes'),
-          '#description' => $this->t('<p>The classes to applied on section. Please seprate them with spaces.</p>'),
-          '#default_value' => $config['lb_section_extras']['section_attributes']['classes'] ?? [],
-        ];
         $form['layout_settings']['section_attributes']['data'] = [
           '#type' => 'textarea',
           '#title' => $this->t('Data-* attributes'),
@@ -234,7 +228,10 @@ class LbSectionFormAlter implements EventSubscriberInterface {
       }
 
       // Adding custom validation and submit.
-      $form['#validate'][] = 'Drupal\lb_section_extras\EventSubscriber\LbSectionFormAlter::layoutBuilderSectionFormAlterValidate';
+      array_unshift(
+        $form['#validate'],
+        'Drupal\lb_section_extras\EventSubscriber\LbSectionFormAlter::layoutBuilderSectionFormAlterSubmit'
+      );
       array_unshift(
         $form['#submit'],
         'Drupal\lb_section_extras\EventSubscriber\LbSectionFormAlter::layoutBuilderSectionFormAlterSubmit'
@@ -249,15 +246,6 @@ class LbSectionFormAlter implements EventSubscriberInterface {
     $values = $form_state->getValues();
     if (isset($values['layout_settings']['section_attributes']['id']) && !$this->layoutBuilderAttributeValidation($values['layout_settings']['section_attributes']['id'])) {
       $form_state->setError($form['layout_settings']['section_attributes']['id'], $this->t('ID attribute must be valid for CSS.'));
-    }
-    if (isset($values['layout_settings']['section_attributes']['classes'])) {
-      $classes = explode(' ', $values['layout_settings']['section_attributes']['classes']);
-      foreach ($classes as $class) {
-        if (!$this->layoutBuilderAttributeValidation($class)) {
-          $form_state->setError($form['layout_settings']['section_attributes']['classes'], $this->t('Class attribute must be valid CSS classes'));
-          break;
-        }
-      }
     }
     if (isset($values['layout_settings']['section_attributes']['data'])) {
       $data_attrs = preg_split('/\R/', $values['layout_settings']['section_attributes']['data']);
@@ -286,7 +274,6 @@ class LbSectionFormAlter implements EventSubscriberInterface {
     $config['lb_section_extras'] = [
       'section_attributes' => [
         'id' => $form_state->getValue(['layout_settings', 'section_attributes', 'id']),
-        'classes' => $form_state->getValue(['layout_settings', 'section_attributes', 'classes']),
         'data' => $form_state->getValue(['layout_settings', 'section_attributes', 'data']),
       ],
       'section_title' => [
@@ -337,8 +324,9 @@ class LbSectionFormAlter implements EventSubscriberInterface {
       foreach ($colors as $class => $color) {
         $options[$class] = $color;
       }
-      $options = ['bg-none' => t("None")] + $options;
+      $options = ['bg-none' => $this->t("None")] + $options;
     }
+    return $options;
   }
 
   /**
