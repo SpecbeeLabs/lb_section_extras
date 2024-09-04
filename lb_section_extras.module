@@ -17,9 +17,8 @@ function lb_section_extras_preprocess_layout(&$variables) {
   $classes = [];
 
   $settings = $variables['settings']['lb_section_extras'];
-  $showConfig = $settings['show_config'];
 
-  if ($variables['settings'] && $showConfig) {
+  if ($variables['settings']) {
     if(isset($settings['section_background']) || isset($settings['padding']) || isset($settings['spacing']) || isset($settings['section_theme']['styles'])) {
       // Merge all modifier classes.
       $classes = array_merge($classes,
@@ -35,9 +34,6 @@ function lb_section_extras_preprocess_layout(&$variables) {
       if (isset($settings['section_attributes']['id']) && $settings['section_attributes']['id'] !== '') {
         $variables['attributes']['id'] = $settings['section_attributes']['id'];
       }
-      if (isset($settings['section_attributes']['classes']) && $settings['section_attributes']['classes'] !== '') {
-        $classes = array_merge($classes, [$settings['section_attributes']['classes']]);
-      }
       if (isset($settings['section_attributes']['data']) && $settings['section_attributes']['data'] !== '') {
         $data_attrs = $settings['section_attributes']['data'];
         $data_attrs = preg_split('/\R/', $data_attrs);
@@ -47,12 +43,10 @@ function lb_section_extras_preprocess_layout(&$variables) {
         }
       }
     }
-
-    // Filter out any none values.
-    $classes = array_filter($classes, fn ($m) => $m != 'none');
   }
 
   foreach ($classes as $class) {
     $variables['attributes']['class'][] = $class;
   }
+
 }
